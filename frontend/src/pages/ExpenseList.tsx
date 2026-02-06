@@ -1,25 +1,89 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { format } from 'date-fns';
-import { Search, Filter, Edit2, Trash2, Calendar, DollarSign } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns';
+import { Search, Filter, Edit2, Trash2, Calendar, DollarSign, X, Download, FileText } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { expenseApi, categoryApi } from '../lib/api';
+import { expenseApi, categoryApi, Expense } from '../lib/api';
+import { exportToCSV, exportToPDF } from '../lib/export';
+
+interface ExpenseForm {
+  categoryId: string;
+  amount: number;
+  description: string;
+  date: string;
+}
 
 const ExpenseList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [dateRange, setDateRange] = useState('all');
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const queryClient = useQueryClient();
 
+  const getDateRangeParams = () => {
+    const today = new Date();
+    switch (dateRange) {
+      case 'today':
+        return {
+          startDate: format(today, 'yyyy-MM-dd'),
+          endDate: format(today, 'yyyy-MM-dd'),
+        };
+      case 'week':
+        return {
+          startDate: format(startOfWeek(today), 'yyyy-MM-dd'),
+          endDate: format(endOfWeek(today), 'yyyy-MM-dd'),
+        };
+      case 'month':
+        return {
+          startDate: format(startOfMonth(today), 'yyyy-MM-dd'),
+          endDate: format(endOfMonth(today), 'yyyy-MM-dd'),
+        };
+      case 'year':
+        return {
+          startDate: format(startOfYear(today), 'yyyy-MM-dd'),
+          endDate: format(endOfYear(today), 'yyyy-MM-dd'),
+        };
+      default:
+        return {};
+    }
+  };
+
   const { data: expenses = [], isLoading } = useQuery(
-    ['expenses', searchTerm, selectedCategory, dateRange],
+    ['expenses', selectedCategory, dateRange],
     () => expenseApi.getExpenses({
       category: selectedCategory || undefined,
-      // Add date filtering logic here
+      ...getDateRangeParams(),
     })
   );
 
   const { data: categories = [] } = useQuery('categories', categoryApi.getCategories);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ExpenseForm>();
+
+  const updateExpenseMutation = useMutation(
+    ({ id, data }: { id: string; data: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'category'> }) =>
+      expenseApi.updateExpense(id, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('expenses');
+        queryClient.invalidateQueries('analytics');
+        toast.success('Expense updated successfully!');
+        setShowEditModal(false);
+        setEditingExpense(null);
+        reset();
+      },
+      onError: () => {
+        toast.error('Failed to update expense');
+      },
+    }
+  );
 
   const deleteExpenseMutation = useMutation(expenseApi.deleteExpense, {
     onSuccess: () => {
@@ -38,9 +102,26 @@ const ExpenseList: React.FC = () => {
     return matchesSearch;
   });
 
+  const handleEdit = (expense: Expense) => {
+    setEditingExpense(expense);
+    reset({
+      categoryId: expense.categoryId,
+      amount: expense.amount,
+      description: expense.description,
+      date: format(new Date(expense.date), 'yyyy-MM-dd'),
+    });
+    setShowEditModal(true);
+  };
+
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this expense?')) {
       deleteExpenseMutation.mutate(id);
+    }
+  };
+
+  const onSubmit = (data: ExpenseForm) => {
+    if (editingExpense) {
+      updateExpenseMutation.mutate({ id: editingExpense.id, data });
     }
   };
 
@@ -55,7 +136,7 @@ const ExpenseList: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="animate-slide-up">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
           Expense History
         </h1>
@@ -63,7 +144,7 @@ const ExpenseList: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="card">
+      <div className="card animate-slide-up" style={{ animationDelay: '0.1s' }}>
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
@@ -109,14 +190,38 @@ const ExpenseList: React.FC = () => {
       </div>
 
       {/* Expense List */}
-      <div className="card">
+      <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">
               {filteredExpenses.length} Expenses Found
             </h3>
-            <div className="text-sm text-gray-500">
-              Total: ${filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
+            <div className="flex items-center space-x-3">
+              <div className="text-sm text-gray-500">
+                Total: ${filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
+              </div>
+              <button
+                onClick={() => {
+                  exportToCSV(filteredExpenses, `expenses-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+                  toast.success('Exported to CSV!');
+                }}
+                className="btn-secondary flex items-center space-x-2 text-sm"
+                disabled={filteredExpenses.length === 0}
+              >
+                <Download className="h-4 w-4" />
+                <span>CSV</span>
+              </button>
+              <button
+                onClick={() => {
+                  exportToPDF(filteredExpenses);
+                  toast.success('Opening PDF preview...');
+                }}
+                className="btn-secondary flex items-center space-x-2 text-sm"
+                disabled={filteredExpenses.length === 0}
+              >
+                <FileText className="h-4 w-4" />
+                <span>PDF</span>
+              </button>
             </div>
           </div>
 
@@ -155,7 +260,10 @@ const ExpenseList: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <button className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                      <button
+                        onClick={() => handleEdit(expense)}
+                        className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                      >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
@@ -180,6 +288,107 @@ const ExpenseList: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-slide-up">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">Edit Expense</h3>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingExpense(null);
+                  reset();
+                }}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select
+                  {...register('categoryId', { required: 'Category is required' })}
+                  className="input-field w-full"
+                >
+                  <option value="">Select category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.categoryId && (
+                  <p className="mt-1 text-sm text-red-600">{errors.categoryId.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Amount ($)</label>
+                <input
+                  {...register('amount', {
+                    required: 'Amount is required',
+                    min: { value: 0.01, message: 'Amount must be greater than 0' },
+                    valueAsNumber: true,
+                  })}
+                  type="number"
+                  step="0.01"
+                  className="input-field w-full"
+                  placeholder="0.00"
+                />
+                {errors.amount && (
+                  <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <input
+                  {...register('description', { required: 'Description is required' })}
+                  type="text"
+                  className="input-field w-full"
+                  placeholder="What did you spend on?"
+                />
+                {errors.description && (
+                  <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <input
+                  {...register('date', { required: 'Date is required' })}
+                  type="date"
+                  className="input-field w-full"
+                />
+                {errors.date && (
+                  <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>
+                )}
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button type="submit" className="btn-primary flex-1">
+                  Update Expense
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingExpense(null);
+                    reset();
+                  }}
+                  className="btn-secondary flex-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import ExpenseList from './pages/ExpenseList';
 import AddExpense from './pages/AddExpense';
 import Budgets from './pages/Budgets';
 import RecurringExpenses from './pages/RecurringExpenses';
@@ -55,6 +56,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <Layout>
               <AddExpense />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/expenses"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ExpenseList />
             </Layout>
           </ProtectedRoute>
         }

@@ -1,6 +1,6 @@
 # 💰 Expense Tracker
 
-A full-stack web application for tracking daily expenses, setting budgets, and viewing analytics.
+A full-stack web application for tracking daily expenses, setting budgets, managing recurring expenses, and viewing detailed analytics.
 
 ## 🚀 Features
 
@@ -8,12 +8,14 @@ A full-stack web application for tracking daily expenses, setting budgets, and v
 - User registration and login
 - JWT-based authentication
 - Protected routes
+- Secure password hashing
 
 ### 💰 Expense Management
 - Add, edit, and delete expenses
 - Categorize spending (Food, Transport, Shopping, etc.)
 - Date-based filtering
-- Expense descriptions
+- Search functionality
+- Export to CSV and PDF
 
 ### 📊 Dashboard & Analytics
 - Monthly expense overview
@@ -21,21 +23,44 @@ A full-stack web application for tracking daily expenses, setting budgets, and v
 - Monthly spending trends
 - Recent expenses list
 - Statistics cards
+- Visual data representation
 
-### 🎯 Categories
+### 🎯 Budget Management
+- Set monthly budgets by category
+- Track budget vs actual spending
+- Visual progress indicators
+- Budget alerts and warnings
+- Month/year filtering
+
+### 🔄 Recurring Expenses
+- Set up recurring transactions (daily, weekly, monthly, yearly)
+- Auto-generate expenses from templates
+- Manage subscriptions and regular payments
+- Active/inactive status tracking
+
+### 📋 Expense List
+- View all expenses with advanced filtering
+- Search by description or category
+- Date range filtering (today, week, month, year, all time)
+- Edit expenses inline
+- Bulk export capabilities
+
+### 🎨 Categories
 - Pre-defined expense categories with icons
 - Color-coded visualization
 - Category-based filtering
+- Icon-based identification
 
 ## 🛠️ Tech Stack
 
 ### Backend
 - **Node.js** + **Express** + **TypeScript**
-- **PostgreSQL** database
+- **JSON File Database** (development)
 - **JWT** authentication
 - **bcryptjs** for password hashing
 - **Joi** for validation
 - **Helmet** + **CORS** for security
+- **Rate limiting** for API protection
 
 ### Frontend
 - **React 18** + **TypeScript**
@@ -45,12 +70,13 @@ A full-stack web application for tracking daily expenses, setting budgets, and v
 - **React Hook Form** for forms
 - **Recharts** for data visualization
 - **React Router** for navigation
+- **date-fns** for date manipulation
+- **Lucide React** for icons
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- PostgreSQL 15+
 - npm or yarn
 
 ### 1. Clone and Install
@@ -60,37 +86,24 @@ cd expense-tracker
 npm run install:all
 ```
 
-### 2. Database Setup
-```bash
-# Start PostgreSQL with Docker
-docker-compose up -d
-
-# Or use your local PostgreSQL instance
-# Create database: expense_tracker
-```
-
-### 3. Backend Configuration
+### 2. Backend Configuration
 ```bash
 cd backend
 cp .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your configuration
 ```
 
-### 4. Initialize Database
-```bash
-# Connect to your PostgreSQL database and run:
-psql -U postgres -d expense_tracker -f src/database/schema.sql
-```
-
-### 5. Start Development Servers
+### 3. Start Development Servers
 ```bash
 # From root directory - starts both frontend and backend
 npm run dev
 
 # Or start individually:
 npm run dev:backend  # Backend on http://localhost:3001
-npm run dev:frontend # Frontend on http://localhost:3000
+npm run dev:frontend # Frontend on http://localhost:5173
 ```
+
+The application will be available at `http://localhost:5173`
 
 ## 📁 Project Structure
 
@@ -98,21 +111,36 @@ npm run dev:frontend # Frontend on http://localhost:3000
 expense-tracker/
 ├── frontend/                 # React frontend
 │   ├── src/
-│   │   ├── components/      # Reusable components
-│   │   ├── contexts/        # React contexts
-│   │   ├── lib/            # API client and utilities
+│   │   ├── components/      # Reusable components (Layout)
+│   │   ├── contexts/        # React contexts (Auth)
+│   │   ├── lib/            # API client, utilities, export functions
 │   │   ├── pages/          # Page components
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── ExpenseList.tsx
+│   │   │   ├── AddExpense.tsx
+│   │   │   ├── Budgets.tsx
+│   │   │   ├── RecurringExpenses.tsx
+│   │   │   ├── Analytics.tsx
+│   │   │   ├── Login.tsx
+│   │   │   └── Register.tsx
 │   │   └── types/          # TypeScript types
 │   └── package.json
 ├── backend/                 # Node.js backend
 │   ├── src/
 │   │   ├── database/       # Database connection and schema
-│   │   ├── middleware/     # Express middleware
+│   │   ├── middleware/     # Express middleware (auth)
 │   │   ├── routes/         # API routes
+│   │   │   ├── auth.ts
+│   │   │   ├── expenses.ts
+│   │   │   ├── categories.ts
+│   │   │   ├── budgets.ts
+│   │   │   ├── recurring.ts
+│   │   │   └── analytics.ts
 │   │   └── index.ts        # Server entry point
+│   ├── database.json       # JSON file database
 │   └── package.json
 ├── shared/                  # Shared TypeScript types
-└── docker-compose.yml       # PostgreSQL setup
+└── package.json            # Root package.json
 ```
 
 ## 🔧 API Endpoints
@@ -129,6 +157,19 @@ expense-tracker/
 
 ### Categories
 - `GET /api/categories` - Get all categories
+
+### Budgets
+- `GET /api/budgets` - Get user budgets (with month/year filter)
+- `POST /api/budgets` - Create new budget
+- `PUT /api/budgets/:id` - Update budget
+- `DELETE /api/budgets/:id` - Delete budget
+
+### Recurring Expenses
+- `GET /api/recurring` - Get user recurring expenses
+- `POST /api/recurring` - Create recurring expense
+- `PUT /api/recurring/:id` - Update recurring expense
+- `DELETE /api/recurring/:id` - Delete recurring expense
+- `POST /api/recurring/generate` - Generate expenses from recurring templates
 
 ### Analytics
 - `GET /api/analytics/expenses` - Get expense statistics
@@ -149,35 +190,74 @@ The app comes with 9 pre-configured categories:
 ## 🔒 Security Features
 
 - JWT token authentication
-- Password hashing with bcryptjs
-- Rate limiting
+- Password hashing with bcryptjs (12 rounds)
+- Rate limiting (100 requests per 15 minutes)
 - CORS protection
 - Helmet security headers
 - Input validation with Joi
-- SQL injection prevention
+- Protected API routes
+
+## 📱 Features Highlights
+
+### Smart Filtering
+- Search across descriptions and categories
+- Filter by category
+- Date range filtering (today, week, month, year, all time)
+- Real-time search results
+
+### Data Export
+- Export expenses to CSV format
+- Generate PDF reports
+- Customizable date ranges
+- Category-specific exports
+
+### Budget Tracking
+- Visual progress bars
+- Color-coded status indicators (good, warning, over budget)
+- Monthly budget summaries
+- Category-wise budget allocation
+
+### Recurring Expenses
+- Multiple frequency options (daily, weekly, monthly, yearly)
+- Automatic expense generation
+- Start and end date management
+- Active/inactive toggle
 
 ## 🚀 Deployment
 
 ### Backend
-1. Build: `npm run build`
+1. Build: `cd backend && npm run build`
 2. Set production environment variables
-3. Deploy to your preferred platform (Heroku, Railway, etc.)
+3. Deploy to your preferred platform (Heroku, Railway, Render, etc.)
 
 ### Frontend
-1. Build: `npm run build`
+1. Build: `cd frontend && npm run build`
 2. Deploy `dist/` folder to static hosting (Vercel, Netlify, etc.)
 
 ### Database
-- Use managed PostgreSQL (AWS RDS, Railway, etc.)
-- Run schema.sql on production database
+- Current: JSON file (development only)
+- Production: Migrate to PostgreSQL, MySQL, or MongoDB
+
+## 🔮 Future Enhancements
+
+- [ ] PostgreSQL database integration
+- [ ] Email notifications for budget alerts
+- [ ] Multi-currency support
+- [ ] Receipt photo upload
+- [ ] Mobile app (React Native)
+- [ ] Shared budgets for families
+- [ ] Financial goals tracking
+- [ ] Automated expense categorization (AI)
+- [ ] Bank account integration
+- [ ] Tax report generation
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📝 License
 
