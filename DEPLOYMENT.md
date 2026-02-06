@@ -15,12 +15,13 @@
 4. Choose your `tracker` repository
 5. Railway will detect it's a Node.js project
 
-### Step 2: Configure Backend
+### Step 2: Configure Backend - IMPORTANT!
 1. Click on your service
 2. Go to "Settings" tab
-3. Set **Root Directory**: `backend`
-4. Set **Build Command**: `npm run build`
+3. **CRITICAL**: Set **Root Directory** to: `backend`
+4. Set **Build Command**: `npm install && npm run build`
 5. Set **Start Command**: `npm start`
+6. Click "Save Changes"
 
 ### Step 3: Add Environment Variables
 Go to "Variables" tab and add:
@@ -51,22 +52,23 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 2. Select "Deploy from GitHub repo"
 3. Choose your `tracker` repository again
 
-### Step 2: Configure Frontend
+### Step 2: Configure Frontend - IMPORTANT!
 1. Click on the frontend service
 2. Go to "Settings" tab
-3. Set **Root Directory**: `frontend`
-4. Set **Build Command**: `npm run build`
-5. Set **Start Command**: Leave empty (static site)
+3. **CRITICAL**: Set **Root Directory** to: `frontend`
+4. Set **Build Command**: `npm install && npm run build`
+5. Set **Start Command**: `npm start`
+6. Click "Save Changes"
 
-### Step 3: Set Static Site Output
+### Step 3: Set Environment Variables
 Go to "Variables" tab and add:
 
 ```
-RAILPACK_SPA_OUTPUT_DIR=dist
 VITE_API_URL=https://your-backend-url.railway.app/api
+NODE_ENV=production
 ```
 
-Replace `your-backend-url` with the URL from Backend Step 4.
+Replace `your-backend-url` with the URL from Backend deployment.
 
 ### Step 4: Update Frontend API Configuration
 You need to update the frontend to use the environment variable:
