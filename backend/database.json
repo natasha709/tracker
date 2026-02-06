@@ -1,0 +1,173 @@
+{
+  "users": [
+    {
+      "id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "email": "natashawinnie20@gmail.com",
+      "name": "Natasha Justine",
+      "password_hash": "$2a$12$D9PyLJDxvZacq2yCn9FlgeuL7.jKYerImmn1OV/wdwgIHojZckN3q",
+      "created_at": "2026-02-02T09:39:44.907Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "99967bde-ecf6-491a-a853-3bf78ee9157f",
+      "name": "Food & Dining",
+      "color": "#FF6B6B",
+      "icon": "🍽️"
+    },
+    {
+      "id": "a1b0b12e-fcef-4f7a-b49a-c82d948a0fb6",
+      "name": "Transportation",
+      "color": "#4ECDC4",
+      "icon": "🚗"
+    },
+    {
+      "id": "459c4229-fc76-4c31-a5e2-c10f76d0f8e2",
+      "name": "Shopping",
+      "color": "#45B7D1",
+      "icon": "🛍️"
+    },
+    {
+      "id": "7ca030ec-ed48-4125-92c1-c509b3316427",
+      "name": "Entertainment",
+      "color": "#96CEB4",
+      "icon": "🎬"
+    },
+    {
+      "id": "5cddd4d2-76ef-46bc-9e3f-51bec06ac8f9",
+      "name": "Bills & Utilities",
+      "color": "#FFEAA7",
+      "icon": "💡"
+    },
+    {
+      "id": "7a51f01c-4628-45fb-bec3-9c31073a3e6b",
+      "name": "Healthcare",
+      "color": "#DDA0DD",
+      "icon": "🏥"
+    },
+    {
+      "id": "d63d8f06-355c-4672-88c6-abaa02ec79a3",
+      "name": "Education",
+      "color": "#98D8C8",
+      "icon": "📚"
+    },
+    {
+      "id": "235b8857-e4cb-40fd-aebe-6adf63a7f36f",
+      "name": "Travel",
+      "color": "#F7DC6F",
+      "icon": "✈️"
+    },
+    {
+      "id": "39851725-21c6-4b7f-abec-218e677f6011",
+      "name": "Other",
+      "color": "#BDC3C7",
+      "icon": "📦"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "dc6e6e6f-b34c-4544-ba24-e6522792ef5a",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "99967bde-ecf6-491a-a853-3bf78ee9157f",
+      "amount": 9999,
+      "description": "the best service i got ",
+      "date": "2026-02-02",
+      "created_at": "2026-02-02T09:54:18.798Z"
+    },
+    {
+      "id": "f8984958-4ca0-4f7b-8108-95e058276efb",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "a1b0b12e-fcef-4f7a-b49a-c82d948a0fb6",
+      "amount": 300,
+      "description": "the best service i got ",
+      "date": "2026-02-03",
+      "created_at": "2026-02-02T10:13:03.051Z"
+    },
+    {
+      "id": "177005566882048m2zk1mo",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "d63d8f06-355c-4672-88c6-abaa02ec79a3",
+      "amount": 234500,
+      "description": "schoolfees payment (Auto-generated)",
+      "date": "2026-02-02",
+      "created_at": "2026-02-02T18:07:48.820Z",
+      "recurring_id": "1770054597911xj4ky2mnc"
+    },
+    {
+      "id": "1770055668822hle7tkddl",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "459c4229-fc76-4c31-a5e2-c10f76d0f8e2",
+      "amount": 88900,
+      "description": "shopping (Auto-generated)",
+      "date": "2026-02-02",
+      "created_at": "2026-02-02T18:07:48.822Z",
+      "recurring_id": "1770055180697et7w036gt"
+    },
+    {
+      "id": "17700556759825uc93kcq1",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "d63d8f06-355c-4672-88c6-abaa02ec79a3",
+      "amount": 234500,
+      "description": "schoolfees payment (Force Generated)",
+      "date": "2026-02-02",
+      "created_at": "2026-02-02T18:07:55.982Z",
+      "recurring_id": "1770054597911xj4ky2mnc"
+    },
+    {
+      "id": "17700556759863zgth7ctm",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "459c4229-fc76-4c31-a5e2-c10f76d0f8e2",
+      "amount": 88900,
+      "description": "shopping (Force Generated)",
+      "date": "2026-02-02",
+      "created_at": "2026-02-02T18:07:55.987Z",
+      "recurring_id": "1770055180697et7w036gt"
+    }
+  ],
+  "budgets": [
+    {
+      "id": "17700344605784gnp8qga4",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "99967bde-ecf6-491a-a853-3bf78ee9157f",
+      "amount": 8800,
+      "month": 2,
+      "year": 2026,
+      "created_at": "2026-02-02T12:14:20.578Z"
+    },
+    {
+      "id": "17700367042796tayjcspq",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "7a51f01c-4628-45fb-bec3-9c31073a3e6b",
+      "amount": 765,
+      "month": 1,
+      "year": 2026,
+      "created_at": "2026-02-02T12:51:44.279Z"
+    }
+  ],
+  "recurringExpenses": [
+    {
+      "id": "1770054597911xj4ky2mnc",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "d63d8f06-355c-4672-88c6-abaa02ec79a3",
+      "amount": 234500,
+      "description": "schoolfees payment",
+      "frequency": "yearly",
+      "start_date": "2026-02-02T00:00:00.000Z",
+      "end_date": "2027-01-02T00:00:00.000Z",
+      "is_active": true,
+      "created_at": "2026-02-02T17:49:57.911Z"
+    },
+    {
+      "id": "1770055180697et7w036gt",
+      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
+      "category_id": "459c4229-fc76-4c31-a5e2-c10f76d0f8e2",
+      "amount": 88900,
+      "description": "shopping",
+      "frequency": "monthly",
+      "start_date": "2026-02-02T00:00:00.000Z",
+      "end_date": "2026-02-08T00:00:00.000Z",
+      "is_active": true,
+      "created_at": "2026-02-02T17:59:40.697Z"
+    }
+  ]
+}

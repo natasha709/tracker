@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: expense_tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres 
+      -c shared_preload_libraries=pg_stat_statements
+      -c log_statement=all
+      -c log_destination=stderr
+      -c logging_collector=on
+      -c log_min_messages=info
+      -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
+
+volumes:
+  postgres_data:
