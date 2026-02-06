@@ -2,10 +2,12 @@
   "name": "expense-tracker-backend",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "type": "commonjs",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "railway-build": "tsc"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -28,5 +30,9 @@
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
   }
 }
