@@ -66,15 +66,6 @@
   ],
   "expenses": [
     {
-      "id": "dc6e6e6f-b34c-4544-ba24-e6522792ef5a",
-      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
-      "category_id": "99967bde-ecf6-491a-a853-3bf78ee9157f",
-      "amount": 9999,
-      "description": "the best service i got ",
-      "date": "2026-02-02",
-      "created_at": "2026-02-02T09:54:18.798Z"
-    },
-    {
       "id": "f8984958-4ca0-4f7b-8108-95e058276efb",
       "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
       "category_id": "a1b0b12e-fcef-4f7a-b49a-c82d948a0fb6",
@@ -112,16 +103,6 @@
       "date": "2026-02-02",
       "created_at": "2026-02-02T18:07:55.982Z",
       "recurring_id": "1770054597911xj4ky2mnc"
-    },
-    {
-      "id": "17700556759863zgth7ctm",
-      "user_id": "e40321af-9cb8-4a14-8027-fda695c7e48e",
-      "category_id": "459c4229-fc76-4c31-a5e2-c10f76d0f8e2",
-      "amount": 88900,
-      "description": "shopping (Force Generated)",
-      "date": "2026-02-02",
-      "created_at": "2026-02-02T18:07:55.987Z",
-      "recurring_id": "1770055180697et7w036gt"
     }
   ],
   "budgets": [
