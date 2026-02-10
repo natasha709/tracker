@@ -47,7 +47,8 @@ const Dashboard: React.FC = () => {
       color: 'from-blue-500 to-blue-600',
       bgColor: 'from-blue-50 to-blue-100',
       change: '+12.5%',
-      changeType: 'increase'
+      changeType: 'increase',
+      link: null
     },
     {
       title: 'Total Expenses',
@@ -56,16 +57,18 @@ const Dashboard: React.FC = () => {
       color: 'from-green-500 to-green-600',
       bgColor: 'from-green-50 to-green-100',
       change: '+8.2%',
-      changeType: 'increase'
+      changeType: 'increase',
+      link: null
     },
     {
-      title: 'Transactions',
+      title: "This Month's Expenses",
       value: expenses.length.toString(),
       icon: Calendar,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'from-purple-50 to-purple-100',
-      change: '+3',
-      changeType: 'increase'
+      change: `${expenses.length} this month`,
+      changeType: 'increase',
+      link: '/expenses'
     },
     {
       title: 'Categories',
@@ -74,7 +77,8 @@ const Dashboard: React.FC = () => {
       color: 'from-orange-500 to-orange-600',
       bgColor: 'from-orange-50 to-orange-100',
       change: '2 active',
-      changeType: 'neutral'
+      changeType: 'neutral',
+      link: null
     }
   ];
 
@@ -106,33 +110,46 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
-          return (
+          const CardContent = (
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                  <div className="flex items-center mt-2">
+                    <ArrowUpRight className={`h-4 w-4 ${
+                      stat.changeType === 'increase' ? 'text-green-500' : 'text-gray-400'
+                    }`} />
+                    <span className={`text-sm font-medium ml-1 ${
+                      stat.changeType === 'increase' ? 'text-green-600' : 'text-gray-500'
+                    }`}>
+                      {stat.change}
+                    </span>
+                  </div>
+                </div>
+                <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.bgColor}`}>
+                  <Icon className={`h-6 w-6 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`} />
+                </div>
+              </div>
+            </div>
+          );
+
+          return stat.link ? (
+            <Link
+              key={stat.title}
+              to={stat.link}
+              className="card card-hover animate-slide-up cursor-pointer"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              {CardContent}
+            </Link>
+          ) : (
             <div
               key={stat.title}
               className="card card-hover animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
-                    <div className="flex items-center mt-2">
-                      <ArrowUpRight className={`h-4 w-4 ${
-                        stat.changeType === 'increase' ? 'text-green-500' : 'text-gray-400'
-                      }`} />
-                      <span className={`text-sm font-medium ml-1 ${
-                        stat.changeType === 'increase' ? 'text-green-600' : 'text-gray-500'
-                      }`}>
-                        {stat.change}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.bgColor}`}>
-                    <Icon className={`h-6 w-6 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`} />
-                  </div>
-                </div>
-              </div>
+              {CardContent}
             </div>
           );
         })}
@@ -228,7 +245,7 @@ const Dashboard: React.FC = () => {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Recent Expenses</h3>
-            <Link to="/analytics" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            <Link to="/expenses" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
               View All
             </Link>
           </div>
